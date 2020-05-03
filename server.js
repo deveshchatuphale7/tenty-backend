@@ -43,6 +43,26 @@ function createEntry(userinfo){
 }
 */
 
+
+app
+  .route('/delivery')
+  .get(handleInboundSms)
+  .post(handleInboundSms);
+ 
+
+
+  function handleInboundSms(request, response) {
+    const params = Object.assign(request.query, request.body)
+    let msg = "FST-A";
+    MongoClient.connect("mongodb+srv://" + config.mongouser + ":" + config.mongopwd + "@firstcluster-gw5fe.mongodb.net/test?retryWrites=true&w=majority", function (err, client) {
+      var db = client.db("tenty");  
+      db.collection('usermaster').update({"UID":"54373370-8c44-11ea-be66-4d23daf64644"},{$set:{"hourSlot1":moment()}},function(err,result){
+        //send sms to SOS as missed response for slot 1
+      });
+  });
+    response.status(204).send();
+  }
+
 function sendSMS(contactNo,text){
   nexmo.message.sendSms(from,contactNo,text);
 }
@@ -98,6 +118,7 @@ function startTracking(userinfo){
                       if(res[0].hourSlot1 == ""){
                         db.collection('usermaster').update({"UID":userinfo.UID},{$set:{alert:true}},function(err,result){
                           //send sms to SOS as missed response for slot 1
+                          // sendSMS(userinfo.SOSno,'Alert !, missing responsefor slot 1 from suspect'+userinfo.firstName);
                         });
                       }
                   });
@@ -125,6 +146,8 @@ function startTracking(userinfo){
                       if(res[0].hourSlot1 == ""){
                         db.collection('usermaster').update({"UID":userinfo.UID},{$set:{alert:true}},function(err,result){
                           //send sms to SOS as missed response for slot 1
+                        // sendSMS(userinfo.SOSno,'Alert !, missing responsefor slot 2 from suspect'+userinfo.firstName);
+
                         });
                       }
                   });
@@ -140,18 +163,13 @@ function startTracking(userinfo){
           // alert if no response recived for an hour
         });
  */
-  });
 
-				//set interval for 24 hrs
-					// set interval hourly
-						
-					// trigger push for symptoms check for time in between 8-12
-					// trigger push for symptoms check for time in between 1-5
-					// trigger push for symptoms check for time in between 6-10
-					
-				// Track by cnt, break if cnt reaches 14							 
+  });						 
 }
 
+app.get('/test',function(req,res){
+  res.send('<h1>Working !</h1>');
+});
 
 
 app.get('/get-suspects',function(req,res){
@@ -165,9 +183,6 @@ app.get('/get-suspects',function(req,res){
 
 app.post('/start-tracking',function(req,res){
   
-//1. Entry in a database - done
-//2. Send welcome notes - done
-//3. Initiate tracking for 14 days
 
 req.body['dayTrack'] = 0;
 req.body['SOSno'] = "ContactNo";
@@ -193,8 +208,6 @@ req.body['alert'] = false;
   });
 
 });
-
-
 
 
 app.listen(3000, function() {

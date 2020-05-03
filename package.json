@@ -4,6 +4,7 @@
   "description": "Backend logic for tenty",
   "main": "server.js",
   "scripts": {
+    "start":"node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -17,5 +18,8 @@
     "nexmo": "^2.6.0",
     "node-schedule": "^1.3.2",
     "uuid": "^7.0.3"
+  },
+  "engines": {
+    "node": "12.x"
   }
 }
